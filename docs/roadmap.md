@@ -8,7 +8,7 @@ This page separates implemented features from possible future work, based on the
 - Explicit configurable sensor tiles for verified Ambient channels, with °F/°C temperature conversion, labels, timestamps, freshness, and available recent measurement history.
 - SQLite observation history, daily summaries, configurable detailed-data retention, and recent trend/sparkline presentation.
 - Open-Meteo daily forecasts, normally seven days.
-- Leaflet basemap (keyless OpenStreetMap default, optional Stadia Maps) and optional RainViewer latest-frame radar. Radar is implemented; animation and public map pan/zoom are not.
+- Leaflet basemap (keyless OpenStreetMap default, optional Stadia Maps, MapTiler, or Mapbox) and optional RainViewer latest-frame radar. Radar is implemented; animation and public map pan/zoom are not.
 - Responsive desktop, tablet, and mobile dashboard, plus PWA installation and a limited shell cache. Live weather still requires a network connection.
 - Persistent tile enable/disable, ordering, supported sizes, and unsaved desktop/mobile previews.
 - Authenticated administration for layout, quips/messages and condition thresholds, location/ZIP lookup, radar framing, padding, clock/date, source health, and diagnostics.
