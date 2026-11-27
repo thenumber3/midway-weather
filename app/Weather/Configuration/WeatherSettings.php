@@ -2,6 +2,7 @@
 
 namespace App\Weather\Configuration;
 
+use App\Weather\Presentation\Atmosphere;
 use App\Weather\Presentation\SensorTiles;
 use App\Weather\Support\ConditionPhraseLibrary;
 use Illuminate\Support\Facades\DB;
@@ -74,7 +75,7 @@ final class WeatherSettings
             'tiles' => array_map(fn ($id) => ['id' => $id, 'enabled' => $id !== 'pool' && ! str_starts_with($id, 'sensor-'), 'size' => in_array($id, ['wind', 'rain', 'indoor']) ? 'wide' : 'standard'], array_keys(self::tiles())),
             'map' => ['location' => (string) config('weather.location_name'), 'zip' => '', 'latitude' => (float) config('weather.latitude'), 'longitude' => (float) config('weather.longitude'), 'zoom' => (int) config('weather.radar.zoom'), 'offset_lat' => 0, 'offset_lon' => 0, 'radar' => (bool) config('weather.radar.enabled')],
             'display' => ['edge_padding' => 22, 'bottom_padding' => 22, 'clock' => true, 'date' => true],
-            'theme' => ['selection' => 'automatic', 'schedules' => [['theme' => 'october-fall', ...self::themes()['october-fall']['default_range']]]],
+            'theme' => ['atmosphere' => Atmosphere::defaults(), 'selection' => 'automatic', 'schedules' => [['theme' => 'october-fall', ...self::themes()['october-fall']['default_range']]]],
             'thresholds' => ['hot' => 85, 'cold' => 45, 'humidity' => 80, 'wind' => 20, 'heavy_rain' => 0.3],
             'quips' => (new ConditionPhraseLibrary)->editablePhrases()];
     }
@@ -87,6 +88,7 @@ final class WeatherSettings
         $row = Schema::hasTable('weather_settings') ? DB::table('weather_settings')->find(1) : null;
 
         $values = $row ? json_decode($row->configuration, true, 512, JSON_THROW_ON_ERROR) : $this->defaults();
+        $values['theme']['atmosphere'] = array_replace_recursive(Atmosphere::defaults(), $values['theme']['atmosphere'] ?? []);
         $values['identity'] = array_replace($this->identityDefaults(), $values['identity'] ?? []);
         $map = Schema::hasTable('weather_map_settings') ? DB::table('weather_map_settings')->find(1) : null;
         $values['basemap'] = ['provider' => $map?->provider ?? 'environment', 'authentication' => $map?->authentication ?? 'domain'];

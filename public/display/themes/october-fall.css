@@ -16,7 +16,6 @@ html[data-seasonal-theme="october-fall"] {
     --sky-mid: var(--fall-mid);
     --sky-bottom: var(--fall-bottom);
     --page-glow: rgba(var(--fall-light), 0.28);
-    --header-glow: rgba(var(--fall-light), 0.15);
     --accent: var(--fall-accent);
     --accent-bright: var(--fall-bright);
     --accent-soft: rgba(var(--fall-metal), 0.22);

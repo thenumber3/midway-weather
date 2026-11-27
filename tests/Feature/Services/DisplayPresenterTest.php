@@ -66,6 +66,37 @@ final class DisplayPresenterTest extends TestCase
         $this->assertSame('warm', $vm['theme']['temperature_mood']);
     }
 
+    public function test_display_scene_uses_live_precipitation_and_retires_stale_inputs(): void
+    {
+        $now = CarbonImmutable::parse('2026-11-26 17:40', 'America/New_York');
+        $this->travelTo($now);
+        $forecast = $this->storeForecastDay($now, [
+            'weather_code' => 95,
+            'fetched_at' => $now->subMinutes(15)->utc(),
+            'sunrise' => $now->setTime(7, 20)->utc(),
+            'sunset' => $now->setTime(17, 35)->utc(),
+        ]);
+        $this->storeObservation($now->subMinute()->utc(), ['temperature' => 39, 'rain_hourly' => 0]);
+        $dry = $this->presenter()->present($now)['theme']['scene'];
+        $this->assertSame('clear', $dry['kind']);
+        $this->assertSame($now->setTime(17, 35)->timestamp, $dry['solar']['sunset']);
+
+        $this->storeObservation($now->utc(), ['temperature' => 39, 'rain_hourly' => 0.24, 'wind_direction' => 225]);
+        $storm = $this->presenter()->present($now)['theme']['scene'];
+        $this->assertSame('thunderstorm', $storm['kind']);
+        $this->assertSame(39.0, $storm['temperature']);
+        $this->assertSame(225, $storm['direction']);
+
+        $forecast->update(['fetched_at' => $now->subHours(8)->utc()]);
+        $this->assertSame('rain', $this->presenter()->present($now)['theme']['scene']['kind']);
+
+        $later = $this->presenter()->present($now->addHour());
+        $this->assertSame('stale', $later['health']['freshness']);
+        $this->assertSame(39.0, $later['observation']['temperature']);
+        $this->assertFalse($later['theme']['scene']['available']);
+        $this->assertNull($later['theme']['scene']['rain']);
+    }
+
     public function test_present_uses_the_configured_map_zoom(): void
     {
         config(['weather.radar.zoom' => 9]);

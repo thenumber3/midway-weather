@@ -82,10 +82,12 @@ final class PwaInstallTest extends TestCase
             ->assertOk()
             ->assertSee('vendor/leaflet/leaflet.css?v=2', false)
             ->assertSee('vendor/leaflet/leaflet.js?v=2', false)
-            ->assertSee('display/app.css?v=20', false)
-            ->assertSee('display/app.js?v=13', false)
+            ->assertSee('display/app.css?v=21', false)
+            ->assertSee('display/app.js?v=16', false)
+            ->assertSee('display/atmosphere.css?v=1', false)
+            ->assertSee('display/atmosphere.js?v=1', false)
             ->assertSee('display/pwa.js?v=6', false)
-            ->assertSee('service-worker.js?v=17', false);
+            ->assertSee('service-worker.js?v=20', false);
     }
 
     public function test_required_icon_files_are_present(): void
@@ -147,7 +149,7 @@ final class PwaInstallTest extends TestCase
         $script = file_get_contents(public_path('service-worker.js'));
 
         $this->assertIsString($script);
-        $this->assertStringContainsString("var CACHE_NAME = 'midway-shell-v20';", $script);
+        $this->assertStringContainsString("var CACHE_NAME = 'midway-shell-v23';", $script);
         $this->assertStringContainsString('Promise.all(SHELL_URLS.map(function (url)', $script);
         $this->assertStringContainsString('return cache.add(url).catch(function ()', $script);
         $this->assertStringNotContainsString('cache.addAll(', $script);
@@ -155,6 +157,8 @@ final class PwaInstallTest extends TestCase
         $this->assertStringContainsString("request.mode === 'navigate'", $script);
         $this->assertStringContainsString('requestUrl.origin !== self.location.origin', $script);
         $this->assertStringContainsString('caches.delete(cacheName)', $script);
+        $this->assertContains('display/atmosphere.js?v=1', $this->shellPaths($script));
+        $this->assertContains('display/atmosphere.css?v=1', $this->shellPaths($script));
         $this->assertStringNotContainsString('api/display/weather', implode("\n", $this->shellPaths($script)));
         $this->assertStringNotContainsString('rainviewer', strtolower(implode("\n", $this->shellPaths($script))));
         $this->assertStringNotContainsString('openstreetmap', strtolower(implode("\n", $this->shellPaths($script))));

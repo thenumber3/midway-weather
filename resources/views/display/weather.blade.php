@@ -64,11 +64,14 @@
     <link rel="icon" href="{{ asset('favicon.ico') }}" sizes="any">
     <link rel="apple-touch-icon" href="{{ asset('icons/apple-touch-icon.png') }}" sizes="180x180">
     <link rel="stylesheet" href="{{ asset('vendor/leaflet/leaflet.css') }}?v=2">
-    <link rel="stylesheet" href="{{ asset('display/app.css') }}?v=20">
+    <link rel="stylesheet" href="{{ asset('display/app.css') }}?v=21">
 
     @if ($themeStylesheet = $get('theme_catalog.'.$get('seasonal_theme', 'default').'.stylesheet'))
     <link id="seasonal-theme-stylesheet" rel="stylesheet" href="{{ $themeStylesheet }}">
     @endif
+
+    <link rel="stylesheet" href="{{ asset('display/atmosphere.css') }}?v=1">
+    <script defer src="{{ asset('display/atmosphere.js') }}?v=1"></script>
 
     {{-- The whole view model, embedded for the JS to hydrate its state without
          an extra round trip on first load. This is the SAME data the /api route
@@ -76,17 +79,18 @@
     <script id="bootstrap-data" type="application/json">{!! json_encode($display, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_UNICODE) !!}</script>
 
     <script defer src="{{ asset('vendor/leaflet/leaflet.js') }}?v=2"></script>
-    <script defer src="{{ asset('display/app.js') }}?v=13"></script>
+    <script defer src="{{ asset('display/app.js') }}?v=16"></script>
     @unless ($adminPreview ?? false)
     <script id="pwa-client"
             defer
             src="{{ asset('display/pwa.js') }}?v=6"
-            data-service-worker-url="{{ asset('service-worker.js') }}?v=17"
+            data-service-worker-url="{{ asset('service-worker.js') }}?v=20"
             data-preview-mode="{{ $pwaPreview }}"></script>
     @endunless
 </head>
 <body>
     @include('display.partials.icons')
+    @include('display.partials.atmosphere')
 
     <div class="display" id="display"
          data-weather-url="{{ ($adminPreview ?? false) ? '' : route('api.display.weather') }}"
@@ -216,7 +220,7 @@
             </div>
             <ol class="forecast-days" id="forecast-days" style="--forecast-day-count: {{ max(1, $forecastDayCount) }}">
                 @forelse ($forecastDays as $day)
-                    <li class="forecast-day @if (data_get($day, 'is_today')) forecast-day--today @endif">
+                    <li class="forecast-day @if (data_get($day, 'is_today')) forecast-day--today @endif" data-atmos-day="{{ data_get($day, 'icon', 'cloudy') }}">
                         <span class="forecast-dow">{{ data_get($day, 'day_label') }}</span>
                         <svg class="forecast-icon" aria-hidden="true"><use href="#wi-{{ data_get($day, 'icon', 'cloudy') }}"></use></svg>
                         <span class="forecast-cond">{{ data_get($day, 'condition') }}</span>

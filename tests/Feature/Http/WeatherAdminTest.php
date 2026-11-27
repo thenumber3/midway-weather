@@ -73,6 +73,29 @@ class WeatherAdminTest extends TestCase
         $this->assertSame(1, $s->read()['revision']);
     }
 
+    public function test_atmosphere_preferences_survive_legacy_saves_and_never_accept_simulations(): void
+    {
+        $settings = app(WeatherSettings::class);
+        $values = $settings->defaults();
+        $this->getJson('/api/display/weather')->assertJsonPath('theme.scene.settings.intensity', 'immersive');
+        $values['theme']['atmosphere']['intensity'] = 'subtle';
+        $values['theme']['atmosphere']['effects']['lightning'] = false;
+        $this->admin()->postJson('/admin/settings', ['revision' => 0, 'values' => $values])->assertOk();
+        $this->getJson('/api/display/weather')
+            ->assertJsonPath('theme.scene.settings.intensity', 'subtle')
+            ->assertJsonPath('theme.scene.settings.effects.lightning', false);
+
+        $legacy = $values;
+        unset($legacy['theme']['atmosphere']);
+        $this->postJson('/admin/settings', ['revision' => 1, 'values' => $legacy])->assertOk();
+        $this->assertSame($values['theme']['atmosphere'], $settings->read()['values']['theme']['atmosphere']);
+
+        $values['theme']['atmosphere']['simulation'] = ['temperature' => 120];
+        $this->postJson('/admin/settings', ['revision' => 2, 'values' => $values])
+            ->assertUnprocessable()->assertJsonValidationErrors('theme.atmosphere');
+        $this->assertSame(2, $settings->read()['revision']);
+    }
+
     public function test_invalid_payloads_cannot_replace_configuration(): void
     {
         $v = app(WeatherSettings::class)->defaults();
@@ -146,7 +169,7 @@ class WeatherAdminTest extends TestCase
             ->assertDontSee('href="https://stadiamaps.com/attribution/"', false)
             ->assertSee('data-basemap-provider="openstreetmap"', false)
             ->assertSee('href="https://www.openstreetmap.org/copyright"', false)
-            ->assertSee('display/app.js?v=13', false)
+            ->assertSee('display/app.js?v=16', false)
             ->assertDontSee('id="pwa-client"', false);
 
         $this->assertSame($original, $settings->read());

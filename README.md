@@ -8,14 +8,16 @@ It started as a Raspberry Pi kitchen display: something you can glance at across
 
 **[Install on Windows](docs/installation/windows.md)** · **[Try the demo](#try-it-locally)** · **[Requirements and compatibility](docs/installation/requirements.md)** · **[Live dashboard](https://weather.midway-ecosystem.com/)**
 
-![Live Midway Weather dashboard with October / Fall styling, station observations, radar map, and seven-day forecast](docs/screenshots/dashboard-october.png)
+![Midway Weather dashboard with wind-driven rain, synthetic station readings, a map, and seven styled forecast cards](docs/screenshots/dashboard-atmosphere-rain.webp)
+
+*Atmosphere 2.0 on a local demo dashboard with synthetic station readings and forecast data.*
 
 <details>
 <summary><strong>The same dashboard on your phone</strong></summary>
 
-The mobile layout stacks the same observations, radar, and forecast for a scrolling view. Expand the full capture below, or open the [screenshot tour](docs/screenshots/README.md).
+The mobile layout stacks current conditions, the map, and station readings in a scrolling view and shows four forecast days on phones. Expand the full capture below, or open the [screenshot tour](docs/screenshots/README.md).
 
-<img src="docs/screenshots/dashboard-mobile.png" alt="Midway Weather on a phone, with stacked conditions, radar, station readings, and forecast" width="320">
+<img src="docs/screenshots/dashboard-atmosphere-mobile.webp" alt="Atmosphere 2.0 demo on a phone, with rain, current conditions, a map, and four forecast cards" width="320">
 
 </details>
 
@@ -29,7 +31,7 @@ The mobile layout stacks the same observations, radar, and forecast for a scroll
 - **A heading that feels like home.** Set your own dashboard title and subtitle, hide the subtitle, and choose a fixed weather icon or keep the weather/time-of-day icon. This personalizes the display without renaming Midway Weather.
 - **A layout that fits your household.** Enable, disable, reorder, and resize supported tiles, with desktop and mobile draft previews before saving.
 - **A little personality.** Edit the quip library, match messages to weather or time of day, and let the existing rotation keep them from repeating too often.
-- **Seasonal atmosphere.** Choose the standard Weather palette or October / Fall, or schedule recurring annual theme ranges. Colors also respond to conditions, time of day, and temperature.
+- **Atmosphere 2.0.** Wind-driven rain and snow, drifting clouds and fog, local twilight, frost, heat shimmer, and a different look for each forecast day. Adjust the effects in Admin or schedule a seasonal palette such as October / Fall.
 - **A phone-friendly display.** Responsive layouts and optional home-screen installation through the PWA; no separate mobile app is required.
 - **Useful visibility behind the scenes.** Source freshness, collection failures, scheduler heartbeat, release identity, and diagnostics in authenticated administration.
 
@@ -59,19 +61,17 @@ In **Admin → Display settings → Dashboard identity**, enter a title such as 
 
 ### Change the atmosphere
 
-The standard Weather theme and October / Fall use the same observations and layout. Automatic date ranges let a seasonal theme come and go each year.
+Atmosphere 2.0 makes the dashboard reflect what it feels like outside. Cold rain at sunset brings slanted rain and cool glass cards. Clear nights bring stars and moonlight, while snow adds drifting flakes and frost accents. Station readings, the daily forecast, and local sunrise and sunset shape the scene. The map and radar keep their own display layers.
 
-| Standard Weather palette | Alternate tile selection |
-| --- | --- |
-| ![Standard Weather theme in an unsaved dashboard preview](docs/screenshots/dashboard-standard-preview.png) | ![Unsaved alternate layout with reordered humidity and fewer active tiles](docs/screenshots/dashboard-alternate-preview.png) |
+Open **Admin → Themes** to choose **Off**, **Subtle**, **Balanced**, or **Immersive** (the default). Preview the latest weather or switch to **Simulate conditions** to try a different temperature, wind, precipitation intensity, or time of day. The simulation stays in that browser tab. Seasonal selection and recurring schedules are available in the same section. [Atmosphere and seasonal themes](docs/admin.md#atmosphere-and-seasonal-themes)
 
-These two images are authentic **unsaved admin previews** using production observations. The hero above shows the live October / Fall dashboard.
+![Atmospheric engine controls in Weather Admin previewing cold rain at sunset with simulation sliders](docs/screenshots/admin-atmosphere-cold-rain.webp)
 
 ### Add your own voice
 
 ![Quip editor with editable weather messages and condition matching](docs/screenshots/admin-quips.png)
 
-See the [complete screenshot tour](docs/screenshots/README.md) for mobile, theme schedules, map configuration, data sources, and system diagnostics. Screenshots are snapshots of real weather, not a guarantee of current conditions.
+See the [complete screenshot tour](docs/screenshots/README.md) for mobile, theme schedules, map configuration, data sources, and system diagnostics. The gallery labels demo and simulated conditions separately from historical live captures.
 
 ## How it works
 
@@ -157,7 +157,7 @@ The scheduler collects observations every minute, forecasts hourly, and aggregat
 
 Open `/admin` and sign in with your configured administrator email and password. There is no default password or public registration. Local setup uses `MIDWAY_WEATHER_ADMIN_EMAIL` and `MIDWAY_WEATHER_ADMIN_PASSWORD_HASH`; [the setup guide](docs/configuration.md#administrator-setup) explains generating a hash without placing your password in shell history.
 
-Administration manages tiles and previews, quips, seasonal schedules, location and radar, display padding and clock, weather thresholds, source health, and diagnostics. Saves use revision checks to avoid overwriting another administrator's changes. Provider connections can use deployment configuration or encrypted Admin overrides; credentials are not returned in display data. See the [admin guide](docs/admin.md).
+Administration manages tiles and previews, quips, atmospheric effects, seasonal schedules, location and radar, display padding and clock, weather thresholds, source health, and diagnostics. Saves use revision checks to avoid overwriting another administrator's changes. Provider connections can use deployment configuration or encrypted Admin overrides; credentials are not returned in display data. See the [admin guide](docs/admin.md).
 
 ### Production hosting
 

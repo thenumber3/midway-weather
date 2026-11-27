@@ -1,0 +1,118 @@
+.atmosphere-panel-heading,
+.atmosphere-preview-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+.atmosphere-panel-heading { margin-bottom: 15px; }
+.atmosphere-panel-heading h2 { margin: 0; }
+.atmosphere-preview {
+    color: #f3f8ff;
+    position: relative;
+    isolation: isolate;
+    overflow: hidden;
+    border-radius: 17px;
+    border: 1px solid #7e9fbd56;
+    background: linear-gradient(145deg, #2f4659, #101d2c 76%);
+    padding: clamp(13px, 2.8vw, 28px);
+}
+.atmosphere-preview .atmosphere-scene { position: absolute; }
+.atmosphere-preview-content { position: relative; }
+.atmosphere-preview-heading { align-items: baseline; margin-bottom: 16px; }
+.atmosphere-preview-heading strong { font-size: clamp(18px, 3vw, 30px); letter-spacing: -.035em; }
+.atmosphere-preview-heading span {
+    color: #ebf4f9;
+    font-size: clamp(10px, 1.5vw, 13px);
+    letter-spacing: .09em;
+    text-transform: uppercase;
+    text-align: right;
+}
+.atmosphere-preview-grid { display: grid; grid-template-columns: minmax(0, 1.54fr) minmax(0, 1fr); gap: 12px; }
+.atmosphere-preview-card {
+    position: relative;
+    overflow: hidden;
+    min-height: 158px;
+    padding: clamp(12px, 2.5vw, 24px);
+    border-radius: 15px;
+    border: 1px solid #b9d6e34d;
+    background: linear-gradient(148deg, #bfdef226, #0915268f);
+}
+.atmosphere-preview-current { display: grid; grid-template-columns: auto 1fr; align-items: center; column-gap: 14px; }
+.atmosphere-preview-current strong,
+.atmosphere-preview-wind strong { display: block; font-size: clamp(32px, 5vw, 63px); letter-spacing: -.065em; line-height: 1; }
+.atmosphere-preview-current span,
+.atmosphere-preview-wind span { color: #e1eef7; font-size: clamp(12px, 1.7vw, 16px); }
+.atmosphere-preview-icon,
+.atmosphere-preview-day-icon {
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.7;
+    color: #dceeff;
+}
+.atmosphere-preview-icon { width: clamp(26px, 7vw, 65px); height: clamp(26px, 7vw, 65px); }
+.atmosphere-preview-trend {
+    color: var(--at-text-accent, #a2e2ff);
+    stroke: currentColor;
+    fill: none;
+    stroke-width: 2;
+    width: 100%;
+    height: 26px;
+    grid-column: 1 / -1;
+    align-self: end;
+}
+.atmosphere-preview-wind { display: flex; align-items: center; justify-content: space-between; gap: 7px; }
+.atmosphere-preview-wind span:first-child { font-size: 11px; font-weight: 700; letter-spacing: .12em; }
+.atmosphere-preview-compass { width: clamp(31px, 8vw, 72px); flex: none; color: var(--at-text-accent, #a2e2ff); fill: none; stroke: currentColor; }
+.atmosphere-preview-compass circle { opacity: .52; }
+.atmosphere-preview-days {
+    display: grid;
+    grid-template-columns: repeat(7, minmax(0, 1fr));
+    gap: 6px;
+    padding: 0;
+    margin: 10px 0 0;
+    list-style: none;
+}
+.atmosphere-preview-days:empty { display: none; }
+.atmosphere-preview-days li {
+    display: grid;
+    justify-items: center;
+    gap: 3px;
+    border: 1px solid #b9d6e331;
+    background: #0a1a2f70;
+    padding: 7px 2px;
+    border-radius: 9px;
+    font-size: clamp(10px, 1.25vw, 13px);
+}
+.atmosphere-preview-day-icon { width: 22px; height: 22px; }
+.atmosphere-preview-status { margin: 10px 0 15px; min-height: 1.5em; }
+.atmosphere-controls,
+.atmosphere-effect-list {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px 16px;
+}
+.atmosphere-controls label { min-width: 0; }
+.atmosphere-controls label > span { display: flex; justify-content: space-between; gap: 8px; }
+.atmosphere-controls output { font-variant-numeric: tabular-nums; }
+.atmosphere-controls input[type="range"] { padding: 0; accent-color: #81c9f5; }
+.atmosphere-simulation,
+.atmosphere-effects { margin: 20px 0 0; padding: 10px 14px; border: 1px solid #8aa1b544; border-radius: 12px; min-width: 0; }
+.atmosphere-simulation legend,
+.atmosphere-effects legend { padding: 0 5px; font-weight: 650; }
+.atmosphere-simulation p { margin: 0 0 8px; }
+.atmosphere-effect-list label,
+.atmosphere-panel .atmosphere-motion-control { display: flex; align-items: center; gap: 7px; margin: 0; }
+.atmosphere-panel .atmosphere-motion-control { margin-top: 16px; }
+.atmosphere-simulation[hidden] { display: none; }
+
+@media (max-width: 540px) {
+    .atmosphere-panel-heading button { font-size: 11px; padding-inline: 8px; }
+    .atmosphere-preview-grid { gap: 6px; }
+    .atmosphere-preview-card { min-height: 112px; border-radius: 11px; }
+    .atmosphere-preview-current { column-gap: 5px; }
+    .atmosphere-preview-compass { width: 27px; }
+    .atmosphere-preview-days { gap: 3px; }
+    .atmosphere-preview-day-icon { width: 18px; height: 18px; }
+    .atmosphere-controls { grid-template-columns: 1fr; }
+}

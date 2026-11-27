@@ -98,6 +98,8 @@ If any step fails, leave maintenance mode active and the scheduler stopped. Fix 
 
 ## 5. Reopen and verify
 
+When upgrading to Atmosphere 2.0, reopen any already-running dashboard or installed PWA while online to load the new stylesheet and renderer. Existing layout and seasonal choices carry forward. Atmospheric intensity defaults to **Immersive** and can be adjusted in [Admin → Themes](../admin.md#atmosphere-and-seasonal-themes).
+
 ```bash
 php artisan up
 php artisan weather:status
