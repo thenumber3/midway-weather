@@ -88,7 +88,7 @@ class OctoberThemeTest extends TestCase
             $values['theme'] = $theme;
             DB::table('weather_settings')->where('id', 1)->update(['configuration' => json_encode($values)]);
             $migration->up();
-            $this->assertSame($theme, $settings->read()['values']['theme']);
+            $this->assertSame([...$theme, 'atmosphere' => $settings->defaults()['theme']['atmosphere']], $settings->read()['values']['theme']);
         }
     }
 }

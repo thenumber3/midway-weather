@@ -52,9 +52,9 @@ final class DisplayEndpointsTest extends TestCase
             ->assertOk()
             ->assertSee('href="https://example.test/midway-weather/public/favicon.ico"', false)
             ->assertSee('href="https://example.test/midway-weather/public/vendor/leaflet/leaflet.css?v=2"', false)
-            ->assertSee('href="https://example.test/midway-weather/public/display/app.css?v=20"', false)
+            ->assertSee('href="https://example.test/midway-weather/public/display/app.css?v=21"', false)
             ->assertSee('src="https://example.test/midway-weather/public/vendor/leaflet/leaflet.js?v=2"', false)
-            ->assertSee('src="https://example.test/midway-weather/public/display/app.js?v=13"', false)
+            ->assertSee('src="https://example.test/midway-weather/public/display/app.js?v=16"', false)
             ->assertSee('data-weather-url="https://example.test/midway-weather/public/api/display/weather"', false)
             ->assertSee('data-leaflet-images-url="https://example.test/midway-weather/public/vendor/leaflet/images/"', false);
     }

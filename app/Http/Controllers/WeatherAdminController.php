@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\CollectionStatus;
 use App\Support\ReleaseIdentity;
+use App\Weather\Presentation\Atmosphere;
 use App\Weather\Configuration\Basemap;
 use App\Weather\Configuration\WeatherSettings;
 use App\Weather\Configuration\WeatherSources;
@@ -31,6 +32,9 @@ final class WeatherAdminController
         }
         // Old Admin tabs must preserve an explicit map selection on unrelated saves.
         $v['basemap'] ??= app(WeatherSettings::class)->read()['values']['basemap'];
+        if (is_array($v['theme'] ?? null) && ! array_key_exists('atmosphere', $v['theme'])) {
+            $v['theme']['atmosphere'] = app(WeatherSettings::class)->read()['values']['theme']['atmosphere'];
+        }
         // A cached Admin client cannot silently remove newly published sensor tiles.
         $known = array_column($v['tiles'] ?? [], 'id');
         foreach (app(WeatherSettings::class)->read()['values']['tiles'] as $tile) {
@@ -50,10 +54,17 @@ final class WeatherAdminController
             'tiles.*.id' => ['required', Rule::in(array_keys(WeatherSettings::tiles())), 'distinct'], 'tiles.*.enabled' => 'required|boolean', 'tiles.*.size' => ['required', Rule::in(['standard', 'wide'])],
             'map' => 'required|array:location,zip,latitude,longitude,zoom,offset_lat,offset_lon,radar', 'map.location' => 'required|string|max:100', 'map.zip' => 'nullable|string|regex:/^\d{5}$/', 'map.latitude' => 'required|numeric|between:-85,85', 'map.longitude' => 'required|numeric|between:-180,180', 'map.zoom' => 'required|integer|between:3,14', 'map.offset_lat' => 'required|numeric|between:-10,10', 'map.offset_lon' => 'required|numeric|between:-10,10', 'map.radar' => 'required|boolean',
             'display' => 'required|array:edge_padding,bottom_padding,clock,date', 'display.edge_padding' => 'required|integer|between:0,80', 'display.bottom_padding' => 'required|integer|between:0,100', 'display.clock' => 'required|boolean', 'display.date' => 'required|boolean',
-            'theme' => 'required|array:selection,schedules', 'theme.selection' => ['required', Rule::in(['automatic', ...array_keys(WeatherSettings::themes())])], 'theme.schedules' => 'present|array|max:20', 'theme.schedules.*' => 'required|array:theme,start,end', 'theme.schedules.*.theme' => ['required', Rule::in(array_keys(WeatherSettings::themes()))], 'theme.schedules.*.start' => 'required|date_format:m-d', 'theme.schedules.*.end' => 'required|date_format:m-d',
+            'theme.atmosphere' => 'required|array:intensity,effects,respect_reduced_motion',
+            'theme.atmosphere.intensity' => ['required', Rule::in(Atmosphere::INTENSITIES)],
+            'theme.atmosphere.respect_reduced_motion' => 'required|boolean',
+            'theme.atmosphere.effects' => 'required|array:'.implode(',', array_keys(Atmosphere::EFFECTS)),
+            'theme' => 'required|array:selection,schedules,atmosphere', 'theme.selection' => ['required', Rule::in(['automatic', ...array_keys(WeatherSettings::themes())])], 'theme.schedules' => 'present|array|max:20', 'theme.schedules.*' => 'required|array:theme,start,end', 'theme.schedules.*.theme' => ['required', Rule::in(array_keys(WeatherSettings::themes()))], 'theme.schedules.*.start' => 'required|date_format:m-d', 'theme.schedules.*.end' => 'required|date_format:m-d',
             'thresholds' => 'required|array:hot,cold,humidity,wind,heavy_rain', 'thresholds.hot' => 'required|numeric|between:60,110', 'thresholds.cold' => 'required|numeric|between:-20,60|lt:thresholds.hot', 'thresholds.humidity' => 'required|numeric|between:20,100', 'thresholds.wind' => 'required|numeric|between:5,80', 'thresholds.heavy_rain' => 'required|numeric|between:0.01,3',
             'quips' => 'present|array|max:500', 'quips.*' => 'required|array:id,text,enabled,contexts,daylight_only', 'quips.*.id' => 'required|string|max:80|regex:/^[a-zA-Z0-9._-]+$/|distinct', 'quips.*.text' => 'required|string|max:240', 'quips.*.enabled' => 'required|boolean', 'quips.*.daylight_only' => 'required|boolean', 'quips.*.contexts' => 'required|array|min:1|max:20', 'quips.*.contexts.*' => ['required', Rule::in(WeatherSettings::contexts())],
         ];
+        foreach (array_keys(Atmosphere::EFFECTS) as $effect) {
+            $rules['theme.atmosphere.effects.'.$effect] = 'required|boolean';
+        }
         $data = Validator::make($v, $rules)->validate();
         foreach ($data['tiles'] as $t) {
             if (! in_array($t['size'], WeatherSettings::tiles()[$t['id']]['sizes'], true)) {
@@ -81,6 +92,8 @@ final class WeatherAdminController
         foreach (['edge_padding', 'bottom_padding'] as $key) {
             $data['display'][$key] = (int) $data['display'][$key];
         }
+        $data['theme']['atmosphere']['effects'] = array_map('boolval', $data['theme']['atmosphere']['effects']);
+        $data['theme']['atmosphere']['respect_reduced_motion'] = (bool) $data['theme']['atmosphere']['respect_reduced_motion'];
         foreach ($data['thresholds'] as &$threshold) {
             $threshold = (float) $threshold;
         }

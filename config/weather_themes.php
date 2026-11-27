@@ -9,5 +9,5 @@ return [
         'stylesheet' => 'display/themes/october-fall.css?v=2',
         'default_range' => ['start' => '10-01', 'end' => '11-30'],
     ],
-    'default' => ['name' => 'Weather', 'description' => 'Weather and time of day, just as today.', 'stylesheet' => null],
+    'default' => ['name' => 'Weather', 'description' => 'A living sky and dashboard shaped by local weather and sunlight.', 'stylesheet' => null],
 ];

@@ -11,13 +11,13 @@ Start with the [project README](../README.md) for features, screenshots, and a l
 - [Requirements and compatibility](installation/requirements.md): host/display roles, prerequisites and validation limits.
 
 - [Setup and configuration](configuration.md): runtime, providers, SQLite, admin credentials, maps, settings precedence.
-- [Administration](admin.md): layouts/previews, quips, themes, map framing, sources, diagnostics.
+- [Administration](admin.md): layouts/previews, quips, Atmosphere 2.0, seasonal themes, map framing, sources, diagnostics.
 - [Environmental sensors](environmental-sensors.md): shipped sensor tiles, the privately validated Govee pool integration, and future provider directions.
 - [Providers and sensor tiles](providers.md): current connection, discovery, publication, freshness, and retention behavior.
 - [Architecture](architecture.md): collection lifecycle, storage, routes, extension points.
 - [Operations](operations.md): scheduling, retention, backups, troubleshooting, developer validation.
 - [PWA](pwa.md): install identity, cache boundaries, network requirements.
-- [Screenshot tour](screenshots/README.md): authentic hosted dashboard and admin captures.
+- [Screenshot tour](screenshots/README.md): Atmosphere 2.0 demo scenes and historical hosted dashboard and admin captures.
 - [Canonical Weather API](contracts/weather-v2.md): consumer contract mapping and validation.
 
 ## Additional references

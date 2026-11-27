@@ -10,10 +10,12 @@ use App\Models\Observation;
 use App\Weather\Configuration\Basemap;
 use App\Weather\Configuration\WeatherSettings;
 use App\Weather\Data\Trend;
+use App\Weather\Presentation\Atmosphere;
 use App\Weather\Presentation\SensorTiles;
 use App\Weather\Providers\PrimaryWeatherStore;
 use App\Weather\Support\AtmosphereModifier;
 use App\Weather\Support\Compass;
+use App\Weather\Support\ConditionPhraseLibrary;
 use App\Weather\Support\Sparkline;
 use App\Weather\Support\TemperatureMood;
 use App\Weather\Support\WeatherCode;
@@ -57,6 +59,16 @@ class DisplayPresenter
 
         $configuration = app(WeatherSettings::class)->read();
         $identity = $configuration['values']['identity'];
+        $forecast = $this->forecastPayload($now, $timezone);
+        $phrase = $this->summaries->details($latest, $trends, $todayForecast, $isDaytime);
+        $scene = Atmosphere::scene(
+            $freshness === StationHealthService::STALE ? null : $latest,
+            $forecast['is_stale'] ? null : $todayForecast,
+            $now->setTimezone($timezone),
+            $configuration['values']['theme']['atmosphere'],
+        );
+        $stockPhrases = (new ConditionPhraseLibrary)->phrasesFor($phrase['category'], $isDaytime);
+        $scene['allow_quip'] = ($stockPhrases[$phrase['phrase_id']] ?? null) === $phrase['message'];
 
         return [
             'configuration' => $configuration,
@@ -67,12 +79,12 @@ class DisplayPresenter
             'meta' => $this->meta($now, $timezone, $latest),
             'observation' => $this->observationPayload($latest, $todaySummary),
             'trends' => array_map(static fn (Trend $t) => $t->toArray(), $trends),
-            'summary' => $this->summaries->summarize($latest, $trends, $todayForecast, $isDaytime),
+            'summary' => $phrase['message'],
             'sparklines' => $this->sparklines(),
             'rain' => $this->rainPayload($latest, $timezone),
-            'forecast' => $this->forecastPayload($now, $timezone),
+            'forecast' => $forecast,
             'health' => $this->healthPayload($latest, $freshness, $now),
-            'theme' => $this->theme($latest, $now, $timezone, $todayForecast),
+            'theme' => [...$this->theme($latest, $now, $timezone, $todayForecast), 'scene' => $scene],
         ];
     }
 

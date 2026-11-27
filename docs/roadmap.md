@@ -1,6 +1,6 @@
 # Roadmap
 
-This page separates implemented features from possible future work, based on the repository as of October 29, 2026. The earlier V1/V2/V3 labels were an idea list, not release milestones. No dates or delivery commitments are implied below.
+This page separates implemented features from possible future work, based on the repository as of November 27, 2026. The earlier V1/V2/V3 labels were an idea list, not release milestones. No dates or delivery commitments are implied below.
 
 ## Implemented
 
@@ -12,7 +12,7 @@ This page separates implemented features from possible future work, based on the
 - Responsive desktop, tablet, and mobile dashboard, plus PWA installation and a limited shell cache. Live weather still requires a network connection.
 - Persistent tile enable/disable, ordering, supported sizes, and unsaved desktop/mobile previews.
 - Authenticated administration for layout, quips/messages and condition thresholds, location/ZIP lookup, radar framing, padding, clock/date, source health, and diagnostics.
-- Standard Weather and October / Fall presentation, weather/time/temperature styling, and recurring annual theme schedules.
+- Atmosphere 2.0 with condition-driven effects, local solar lighting, reduced motion, a browser-only simulator, and recurring seasonal schedules for Weather and October / Fall.
 - Public display JSON, versioned summary APIs, daily forecast API, operational health/version APIs, and scheduler heartbeat.
 - Application validation CI and pinned API-contract conformance checks. Production deployment is managed separately from this public repository.
 

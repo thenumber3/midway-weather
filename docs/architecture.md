@@ -19,6 +19,12 @@ Saved settings → DisplayPresenter → Blade HTML / display JSON → browser
                                 versioned summary projections
 ```
 
+### Atmospheric presentation
+
+The display presenter supplies a scene through the existing dashboard payload. It uses recent station observations, daily forecast context, and local solar times. Measured rain takes precedence over a conflicting daily rain prediction, and stale inputs age out of the visual scene. The daily forecast still drives its own cards. The versioned weather summary and forecast APIs retain their existing schemas.
+
+The dashboard and Themes preview share one browser renderer. CSS handles lighting and card treatments, while a bounded canvas draws precipitation. Animation work pauses when the scene is out of view or the tab is hidden, and reduced motion keeps a static scene. Admin simulation changes the preview inputs in memory. Leaflet and the radar overlay render independently of the atmospheric layers.
+
 ## Persistence and configuration
 
 | Table | Purpose |

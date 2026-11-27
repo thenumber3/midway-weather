@@ -137,12 +137,17 @@
     var HERO_ICONS = { 'clear-night': 'wi-clear-night', 'rain': 'wi-rain', 'overcast': 'wi-cloudy', 'hot': 'wi-clear-day', 'clear-day': 'wi-clear-day' };
     function heroIconId(themeKey) { return HERO_ICONS[themeKey] || 'wi-clear-day'; }
 
-    function updateHeroIcon(model) {
+    var atmosphere = null;
+    var windAngle = null;
+
+    function updateHeroIcon(model, scene) {
         var key = get(model, 'theme.key') || 'clear-day';
+        var icon = scene && scene.settings.intensity !== 'off' && window.WeatherAtmosphere && (window.WeatherAtmosphere.icon(scene) || 'cloudy');
+        var symbol = icon ? 'wi-' + icon : heroIconId(key);
         [$('hero-icon'), document.querySelector('.brand-mark')].forEach(function (svg) {
             if (!svg) return;
             var use = svg.querySelector('use');
-            if (use) use.setAttribute('href', '#' + (svg.classList.contains('brand-mark') ? get(model, 'identity.symbol') || heroIconId(key) : heroIconId(key)));
+            if (use) use.setAttribute('href', '#' + (svg.classList.contains('brand-mark') ? get(model, 'identity.symbol') || symbol : symbol));
         });
         document.documentElement.setAttribute('data-theme', key);
         document.documentElement.setAttribute('data-atmosphere', get(model, 'theme.atmosphere') || 'clear');
@@ -163,7 +168,9 @@
         var arrow = $('wind-arrow');
         if (arrow && dir != null) {
             // Arrow points the way the wind blows TO (bearing + 180°).
-            arrow.style.transform = 'translate(-50%, -50%) rotate(' + ((dir + 180) % 360) + 'deg)';
+            var target = (dir + 180) % 360;
+            windAngle = windAngle === null ? target : windAngle + ((target - windAngle) % 360 + 540) % 360 - 180;
+            arrow.style.transform = 'translate(-50%, -50%) rotate(' + windAngle + 'deg)';
         }
     }
 
@@ -202,7 +209,7 @@
     }
 
     function forecastDayHtml(day) {
-        return '<li class="forecast-day' + (day.is_today ? ' forecast-day--today' : '') + '">'
+        return '<li class="forecast-day' + (day.is_today ? ' forecast-day--today' : '') + '" data-atmos-day="' + esc(day.icon || 'cloudy') + '">'
             + '<span class="forecast-dow">' + esc(day.day_label) + '</span>'
             + '<svg class="forecast-icon" aria-hidden="true"><use href="#wi-' + esc(day.icon || 'cloudy') + '"></use></svg>'
             + '<span class="forecast-cond">' + esc(day.condition || '') + '</span>'
@@ -215,6 +222,7 @@
     function patchForecastDay(li, day) {
         if (!li) return;
         li.classList.toggle('forecast-day--today', !!day.is_today);
+        li.dataset.atmosDay = day.icon || 'cloudy';
         setText(li.querySelector('.forecast-dow'), day.day_label);
         var use = li.querySelector('.forecast-icon use');
         if (use) use.setAttribute('href', '#wi-' + (day.icon || 'cloudy'));
@@ -714,7 +722,16 @@
         fitConfiguredLayout();
 
         applyBindings(model);
-        updateHeroIcon(model);
+        var scene = get(model, 'theme.scene');
+        updateHeroIcon(model, scene);
+        if (scene && window.WeatherAtmosphere) {
+            if (!atmosphere) atmosphere = window.WeatherAtmosphere.mount(document.documentElement);
+            atmosphere.update(scene, model.seasonal_theme);
+            if (scene.settings.intensity !== 'off' && scene.allow_quip) {
+                var quip = window.WeatherAtmosphere.quip(scene);
+                if (quip) setText($('summary'), quip);
+            }
+        }
         updateTemperatureMood(model);
         updateWind(model);
 
@@ -767,6 +784,7 @@
     function setConnection(status) {
         var display = $('display');
         if (display) display.setAttribute('data-connection', status);
+        atmosphere?.setConnected(status === 'ok');
     }
 
     /* ── Boot ───────────────────────────────────────────────────────────── */
